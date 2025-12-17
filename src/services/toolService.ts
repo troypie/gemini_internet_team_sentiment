@@ -1,8 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import { SentimentToolOutput, GroundingChunk } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
 
+console.log("Starting sentiment analysis tool");
 /**
  * Simulates an MCP Tool Execution.
  * Input: Team Names
@@ -16,9 +17,12 @@ export const runSentimentAnalysisTool = async (
   
   onLog(`[Tool:Start] Initializing sentiment analysis for ${team1} vs ${team2}...`);
   
-  if (!process.env.API_KEY) {
-    throw new Error("Environment variable API_KEY is missing.");
+  if (!import.meta.env.VITE_API_KEY) {
+    throw new Error("Environment variable VITE_API_KEY is missing.");
   }
+
+  
+  console.log("API key present:", !!import.meta.env.VITE_API_KEY);
 
   const model = "gemini-2.5-flash";
   
