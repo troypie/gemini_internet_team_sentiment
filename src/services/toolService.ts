@@ -1,7 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
-import { SentimentToolOutput, GroundingChunk } from "../types";
+import { SentimentToolOutput, GroundingChunk } from "../types.js";
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
+const apiKey = import.meta.env?.VITE_API_KEY || process.env.VITE_API_KEY;
+const ai = new GoogleGenAI({ apiKey });
 
 console.log("Starting sentiment analysis tool");
 /**
@@ -17,22 +18,22 @@ export const runSentimentAnalysisTool = async (
   
   onLog(`[Tool:Start] Initializing sentiment analysis for ${team1} vs ${team2}...`);
   
-  if (!import.meta.env.VITE_API_KEY) {
+  if (!apiKey) {
     throw new Error("Environment variable VITE_API_KEY is missing.");
   }
 
-  
-  console.log("API key present:", !!import.meta.env.VITE_API_KEY);
+  console.log("API key present:", !!apiKey);
 
   const model = "gemini-2.5-flash";
   
   // Prompt updated to request JSON block in markdown since responseMimeType: "application/json" 
   // is not compatible with tool use (googleSearch) in the current API version.
   const prompt = `
-    You are a specialized Sentiment Analysis Tool designed to be part of a larger prediction ensemble.
+    You are a specialized college football expert designed to be part of a larger prediction ensemble.
+    You know more than most of the sources you will search, but you will use them to ground your analysis.
     
     TASK:
-    1. Search the web for the latest news, discussions, injury reports, and betting sentiment for the matchup: ${team1} vs ${team2}.
+    1. Search the web for the latest reddit comments, reddit posts, twitter threads, x posts, news, discussions, injury reports, and betting sentiment for the matchup: ${team1} vs ${team2}.
     2. Analyze the semantic meaning of these sources to determine which team is favored.
     3. Output a single RATIONAL NUMBER score (floating point) between -1.0 and 1.0.
     
